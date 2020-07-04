@@ -1,12 +1,12 @@
 "use strict";
 
-let Promise = require("bluebird");
-let Benchmarkify = require("benchmarkify");
 const { v4: uuid } = require("uuid");
 
-let benchmark = new Benchmarkify("Microservices benchmark").printHeader();
 
-const bench = benchmark.createSuite("Call remote actions");
+const n = 1000;
+const p = 1000;
+
+let result = [];
 
 // Local
 let local;
@@ -25,10 +25,26 @@ let local;
     });
     await local.start();
 
-    bench.add("local", done => {
-        local.call("math.add", { a: 5, b: 3 }).then(done);
+    let ts = Date.now();
+    let count = 0;
+    for (let i = 0; i < n; i+= p) {
+        let calls = Array.from(Array(p),(x,i) => i);
+        await Promise.all(calls.map(async () => {
+            await local.call("math.add", { a: 5, b: 3 });
+            count ++;
+        }));
+    }
+    let tf = Date.now();
+    console.log({
+        "test": "local",
+        "completed": {
+            "calls": count,
+            "time (ms)": tf-ts
+        }
     });
 
+    await local.stop();
+    
 })();
 
 // TCP
@@ -52,10 +68,29 @@ let tcp2;
     await tcp1.start();
     await tcp2.start();
 
-    bench.add("TCP", done => {
-        tcp1.call("math.add", { a: 5, b: 3 }).then(done);
+    await tcp1.waitForServices(["math"]);    
+    
+    let ts = Date.now();
+    let count = 0;
+    for (let i = 0; i < n; i+= p) {
+        let calls = Array.from(Array(p),(x,i) => i);
+        await Promise.all(calls.map(async () => {
+            await tcp1.call("math.add", { a: 5, b: 3 });
+            count ++;
+        }));
+    }
+    let tf = Date.now();
+    console.log({
+        "test": "TCP",
+        "completed": {
+            "calls": count,
+            "time (ms)": tf-ts
+        }
     });
 
+    await tcp1.stop();
+    await tcp2.stop();
+    
 })();
 
 // NATS
@@ -79,10 +114,29 @@ let nats2;
     await nats1.start();
     await nats2.start();
 
-    bench.add("NATS", done => {
-        nats1.call("math.add", { a: 5, b: 3 }).then(done);
+    await nats1.waitForServices(["math"]);    
+    
+    let ts = Date.now();
+    let count = 0;
+    for (let i = 0; i < n; i+= p) {
+        let calls = Array.from(Array(p),(x,i) => i);
+        await Promise.all(calls.map(async () => {
+            await nats1.call("math.add", { a: 5, b: 3 });
+            count ++;
+        }));
+    }
+    let tf = Date.now();
+    console.log({
+        "test": "NATS",
+        "completed": {
+            "calls": count,
+            "time (ms)": tf-ts
+        }
     });
 
+    await nats1.stop();
+    await nats2.stop();
+    
 })();
 
 // KAFKA
@@ -107,28 +161,26 @@ let kafka2;
     await kafka2.start();
     await kafka1.waitForServices(["math"]);
     
-    bench.add("kafka", done => {
-        kafka1.call("math.add", { a: 5, b: 3 }).then(done);
+    let ts = Date.now();
+    let count = 0;
+    for (let i = 0; i < n; i+= p) {
+        let calls = Array.from(Array(p),(x,i) => i);
+        await Promise.all(calls.map(async () => {
+            await kafka1.call("math.add", { a: 5, b: 3 });
+            count ++;
+        }));
+    }
+    let tf = Date.now();
+    console.log({
+        "test": "kafka",
+        "completed": {
+            "calls": count,
+            "time (ms)": tf-ts
+        }
     });
+
+    await kafka1.stop();
+    await kafka2.stop();
 
 })();
 
-Promise.delay(10000).then(() => {
-
-    return benchmark.run([bench]).then(() => {
-        /*
-        local.stop();
-        
-        tcp1.stop();
-        tcp2.stop();
-
-        nats1.stop();
-        nats2.stop();
-        */
-
-        kafka1.stop();
-        kafka2.stop();
-
-    });
-
-});

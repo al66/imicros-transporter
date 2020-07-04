@@ -1,0 +1,457 @@
+
+{
+  "header": {
+    "reportVersion": 1,
+    "event": "Allocation failed - JavaScript heap out of memory",
+    "trigger": "FatalError",
+    "filename": "report.20200704.165027.14016.0.001.json",
+    "dumpEventTime": "2020-07-04T16:50:27Z",
+    "dumpEventTimeStamp": "1593874227801",
+    "processId": 14016,
+    "cwd": "C:\\Daten\\node\\modules\\imicros-transporter",
+    "commandLine": [
+      "node",
+      "dev/simpleEvent"
+    ],
+    "nodejsVersion": "v12.15.0",
+    "wordSize": 64,
+    "arch": "x64",
+    "platform": "win32",
+    "componentVersions": {
+      "node": "12.15.0",
+      "v8": "7.7.299.13-node.16",
+      "uv": "1.33.1",
+      "zlib": "1.2.11",
+      "brotli": "1.0.7",
+      "ares": "1.15.0",
+      "modules": "72",
+      "nghttp2": "1.40.0",
+      "napi": "5",
+      "llhttp": "2.0.4",
+      "http_parser": "2.9.3",
+      "openssl": "1.1.1d",
+      "cldr": "35.1",
+      "icu": "64.2",
+      "tz": "2019c",
+      "unicode": "12.1"
+    },
+    "release": {
+      "name": "node",
+      "lts": "Erbium",
+      "headersUrl": "https://nodejs.org/download/release/v12.15.0/node-v12.15.0-headers.tar.gz",
+      "sourceUrl": "https://nodejs.org/download/release/v12.15.0/node-v12.15.0.tar.gz",
+      "libUrl": "https://nodejs.org/download/release/v12.15.0/win-x64/node.lib"
+    },
+    "osName": "Windows_NT",
+    "osRelease": "10.0.18363",
+    "osVersion": "Windows 10 Pro",
+    "osMachine": "x86_64",
+    "cpus": [
+      {
+        "model": "Intel(R) Core(TM) i7-4710MQ CPU @ 2.50GHz",
+        "speed": 2494,
+        "user": 8069015,
+        "nice": 0,
+        "sys": 9590390,
+        "idle": 1615316671,
+        "irq": 1645218
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-4710MQ CPU @ 2.50GHz",
+        "speed": 2494,
+        "user": 4000250,
+        "nice": 0,
+        "sys": 2254062,
+        "idle": 1626721562,
+        "irq": 24687
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-4710MQ CPU @ 2.50GHz",
+        "speed": 2494,
+        "user": 28502203,
+        "nice": 0,
+        "sys": 7967734,
+        "idle": 1596505937,
+        "irq": 96890
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-4710MQ CPU @ 2.50GHz",
+        "speed": 2494,
+        "user": 3942671,
+        "nice": 0,
+        "sys": 2165359,
+        "idle": 1626867843,
+        "irq": 43906
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-4710MQ CPU @ 2.50GHz",
+        "speed": 2494,
+        "user": 12077437,
+        "nice": 0,
+        "sys": 4831609,
+        "idle": 1616066828,
+        "irq": 72718
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-4710MQ CPU @ 2.50GHz",
+        "speed": 2494,
+        "user": 4019203,
+        "nice": 0,
+        "sys": 2741359,
+        "idle": 1626215296,
+        "irq": 44109
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-4710MQ CPU @ 2.50GHz",
+        "speed": 2494,
+        "user": 8637125,
+        "nice": 0,
+        "sys": 4077234,
+        "idle": 1620261500,
+        "irq": 85984
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-4710MQ CPU @ 2.50GHz",
+        "speed": 2494,
+        "user": 5097265,
+        "nice": 0,
+        "sys": 3571140,
+        "idle": 1624307453,
+        "irq": 27734
+      }
+    ],
+    "networkInterfaces": [
+      {
+        "name": "Drahtlosnetzwerkverbindung",
+        "internal": false,
+        "mac": "28:b2:bd:5d:a6:15",
+        "address": "fe80::e5b1:b236:a967:f8b1",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 7
+      },
+      {
+        "name": "Drahtlosnetzwerkverbindung",
+        "internal": false,
+        "mac": "28:b2:bd:5d:a6:15",
+        "address": "192.168.2.154",
+        "netmask": "255.255.255.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "Mobilfunk",
+        "internal": false,
+        "mac": "90:85:87:59:51:57",
+        "address": "::fd59:138:d525:a603",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "Mobilfunk",
+        "internal": false,
+        "mac": "90:85:87:59:51:57",
+        "address": "::95:a71:5753:bf4c",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "Mobilfunk",
+        "internal": false,
+        "mac": "90:85:87:59:51:57",
+        "address": "fe80::fd59:138:d525:a603",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 41
+      },
+      {
+        "name": "Mobilfunk",
+        "internal": false,
+        "mac": "90:85:87:59:51:57",
+        "address": "10.121.126.208",
+        "netmask": "255.255.255.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "Loopback Pseudo-Interface 1",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "::1",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "Loopback Pseudo-Interface 1",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "127.0.0.1",
+        "netmask": "255.0.0.0",
+        "family": "IPv4"
+      }
+    ],
+    "host": "NBTPT540P-AL"
+  },
+  "javascriptStack": {
+    "message": "No stack.",
+    "stack": [
+      "Unavailable."
+    ]
+  },
+  "nativeStack": [
+    {
+      "pc": "0x00007ff7d1fc1759",
+      "symbol": "std::basic_ostream<char,std::char_traits<char> >::operator<<+10873"
+    },
+    {
+      "pc": "0x00007ff7d1fc5b7c",
+      "symbol": "std::basic_ostream<char,std::char_traits<char> >::operator<<+28316"
+    },
+    {
+      "pc": "0x00007ff7d1fc4b38",
+      "symbol": "std::basic_ostream<char,std::char_traits<char> >::operator<<+24152"
+    },
+    {
+      "pc": "0x00007ff7d20b446b",
+      "symbol": "v8::base::CPU::has_sse+37723"
+    },
+    {
+      "pc": "0x00007ff7d28b8d9e",
+      "symbol": "v8::Isolate::ReportExternalAllocationLimitReached+94"
+    },
+    {
+      "pc": "0x00007ff7d28a0de1",
+      "symbol": "v8::SharedArrayBuffer::Externalize+833"
+    },
+    {
+      "pc": "0x00007ff7d276e6ac",
+      "symbol": "v8::internal::Heap::EphemeronKeyWriteBarrierFromCode+1436"
+    },
+    {
+      "pc": "0x00007ff7d2779a50",
+      "symbol": "v8::internal::Heap::ProtectUnprotectedMemoryChunks+1312"
+    },
+    {
+      "pc": "0x00007ff7d2776584",
+      "symbol": "v8::internal::Heap::PageFlagsAreConsistent+3204"
+    },
+    {
+      "pc": "0x00007ff7d276be13",
+      "symbol": "v8::internal::Heap::CollectGarbage+1283"
+    },
+    {
+      "pc": "0x00007ff7d276a5e4",
+      "symbol": "v8::internal::Heap::AddRetainedMap+2356"
+    },
+    {
+      "pc": "0x00007ff7d278b8b5",
+      "symbol": "v8::internal::Factory::NewFillerObject+53"
+    },
+    {
+      "pc": "0x00007ff7d24f7b89",
+      "symbol": "v8::internal::interpreter::JumpTableTargetOffsets::iterator::operator=+4057"
+    },
+    {
+      "pc": "0x00007ff7d2ce4d3d",
+      "symbol": "v8::internal::SetupIsolateDelegate::SetupHeap+567949"
+    },
+    {
+      "pc": "0x00007ff7d2cb5f7e",
+      "symbol": "v8::internal::SetupIsolateDelegate::SetupHeap+376014"
+    },
+    {
+      "pc": "0x0000021cd21a09dc",
+      "symbol": ""
+    }
+  ],
+  "javascriptHeap": {
+    "totalMemory": 2168549376,
+    "totalCommittedMemory": 2168549376,
+    "usedMemory": 1886709048,
+    "availableMemory": 114687176,
+    "memoryLimit": 2197815296,
+    "heapSpaces": {
+      "read_only_space": {
+        "memorySize": 262144,
+        "committedMemory": 262144,
+        "capacity": 261872,
+        "used": 32296,
+        "available": 229576
+      },
+      "new_space": {
+        "memorySize": 33554432,
+        "committedMemory": 33554432,
+        "capacity": 16759808,
+        "used": 6326144,
+        "available": 10433664
+      },
+      "old_space": {
+        "memorySize": 2132127744,
+        "committedMemory": 2132127744,
+        "capacity": 1936341912,
+        "used": 1878343704,
+        "available": 57998208
+      },
+      "code_space": {
+        "memorySize": 425984,
+        "committedMemory": 425984,
+        "capacity": 348160,
+        "used": 348160,
+        "available": 0
+      },
+      "map_space": {
+        "memorySize": 1052672,
+        "committedMemory": 1052672,
+        "capacity": 590320,
+        "used": 590320,
+        "available": 0
+      },
+      "large_object_space": {
+        "memorySize": 1077248,
+        "committedMemory": 1077248,
+        "capacity": 1064872,
+        "used": 1064872,
+        "available": 0
+      },
+      "code_large_object_space": {
+        "memorySize": 49152,
+        "committedMemory": 49152,
+        "capacity": 3552,
+        "used": 3552,
+        "available": 0
+      },
+      "new_large_object_space": {
+        "memorySize": 0,
+        "committedMemory": 0,
+        "capacity": 16759808,
+        "used": 0,
+        "available": 16759808
+      }
+    }
+  },
+  "resourceUsage": {
+    "userCpuSeconds": 189.437,
+    "kernelCpuSeconds": 9.312,
+    "cpuConsumptionPercent": 164.255,
+    "maxRss": 4770877440,
+    "pageFaults": {
+      "IORequired": 3463673,
+      "IONotRequired": 0
+    },
+    "fsActivity": {
+      "reads": 449,
+      "writes": 6
+    }
+  },
+  "libuv": [
+  ],
+  "environmentVariables": {
+    "=::": "::\\",
+    "=C:": "C:\\Daten\\node\\modules\\imicros-transporter",
+    "=ExitCode": "00000000",
+    "ALLUSERSPROFILE": "C:\\ProgramData",
+    "APPDATA": "C:\\Users\\Andreas\\AppData\\Roaming",
+    "ChocolateyInstall": "C:\\ProgramData\\chocolatey",
+    "ChocolateyLastPathUpdate": "132256567129237934",
+    "CommonProgramFiles": "C:\\Program Files\\Common Files",
+    "CommonProgramFiles(x86)": "C:\\Program Files (x86)\\Common Files",
+    "CommonProgramW6432": "C:\\Program Files\\Common Files",
+    "COMMPath": "C:\\Program Files\\Lenovo\\Communications Utility",
+    "COMPUTERNAME": "NBTPT540P-AL",
+    "ComSpec": "C:\\WINDOWS\\system32\\cmd.exe",
+    "configsetroot": "C:\\WINDOWS\\ConfigSetRoot",
+    "DriverData": "C:\\Windows\\System32\\Drivers\\DriverData",
+    "FPS_BROWSER_APP_PROFILE_STRING": "Internet Explorer",
+    "FPS_BROWSER_USER_PROFILE_STRING": "Default",
+    "FP_NO_HOST_CHECK": "NO",
+    "HOMEDRIVE": "C:",
+    "HOMEPATH": "\\Users\\Andreas",
+    "LOCALAPPDATA": "C:\\Users\\Andreas\\AppData\\Local",
+    "LOGONSERVER": "\\\\NBTPT540P-AL",
+    "NUMBER_OF_PROCESSORS": "8",
+    "OneDrive": "C:\\Users\\Andreas\\OneDrive",
+    "OS": "Windows_NT",
+    "Path": "C:\\Python27\\;C:\\Python27\\Scripts;C:\\Program Files\\Common Files\\Microsoft Shared\\Windows Live;C:\\Program Files (x86)\\Common Files\\Microsoft Shared\\Windows Live;C:\\Program Files (x86)\\Common Files\\TEC-IT\\TBarCode\\10.2\\;C:\\Program Files\\Common Files\\TEC-IT\\TBarCode\\10.2\\;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Program Files (x86)\\Intel\\iCLS Client\\;C:\\Program Files\\Intel\\iCLS Client\\;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files\\Lenovo\\Fingerprint Manager Pro\\;C:\\Program Files (x86)\\Common Files\\Lenovo;C:\\SWTOOLS\\ReadyApps;C:\\Program Files (x86)\\Java\\jre7\\bin;C:\\Program Files (x86)\\Windows Live\\Shared;C:\\Program Files (x86)\\Intel\\Intel(R) Management Engine Components\\DAL;C:\\Program Files\\Intel\\Intel(R) Management Engine Components\\DAL;C:\\Program Files (x86)\\Intel\\Intel(R) Management Engine Components\\IPT;C:\\Program Files\\Intel\\Intel(R) Management Engine Components\\IPT;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\NVIDIA Corporation\\NVIDIA NvDLISR;C:\\Program Files\\Intel\\WiFi\\bin\\;C:\\Program Files\\Common Files\\Intel\\WirelessCommon\\;C:\\Program Files\\nodejs\\;C:\\ProgramData\\chocolatey\\bin;;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files (x86)\\Brackets\\command;C:\\Users\\Andreas\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\Intel\\WiFi\\bin\\;C:\\Program Files\\Common Files\\Intel\\WirelessCommon\\;C:\\Users\\Andreas\\AppData\\Roaming\\npm;",
+    "PATHEXT": ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC",
+    "PROCESSOR_ARCHITECTURE": "AMD64",
+    "PROCESSOR_IDENTIFIER": "Intel64 Family 6 Model 60 Stepping 3, GenuineIntel",
+    "PROCESSOR_LEVEL": "6",
+    "PROCESSOR_REVISION": "3c03",
+    "ProgramData": "C:\\ProgramData",
+    "ProgramFiles": "C:\\Program Files",
+    "ProgramFiles(x86)": "C:\\Program Files (x86)",
+    "ProgramW6432": "C:\\Program Files",
+    "PROMPT": "$P$G",
+    "PSModulePath": "C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules\\",
+    "PUBLIC": "C:\\Users\\Public",
+    "READYAPPS": "C:\\SWTOOLS\\ReadyApps",
+    "REDIS_AUTH": "",
+    "REDIS_DB": "0",
+    "REDIS_HOST": "192.168.2.124",
+    "REDIS_PORT": "6379",
+    "SecSpecialMode": "710916",
+    "SESSIONNAME": "Console",
+    "SWSHARE": "C:\\SWSHARE",
+    "SystemDrive": "C:",
+    "SystemRoot": "C:\\WINDOWS",
+    "TEMP": "C:\\Users\\Andreas\\AppData\\Local\\Temp",
+    "TMP": "C:\\Users\\Andreas\\AppData\\Local\\Temp",
+    "TVT": "C:\\Program Files (x86)\\Lenovo",
+    "TVTCOMMON": "C:\\Program Files (x86)\\Common Files\\Lenovo",
+    "UOIPME_REG_PATH": "C:\\Program Files\\Intel Corporation\\USB over IP",
+    "USERDOMAIN": "NBTPT540P-AL",
+    "USERDOMAIN_ROAMINGPROFILE": "NBTPT540P-AL",
+    "USERNAME": "Andreas",
+    "USERPROFILE": "C:\\Users\\Andreas",
+    "windir": "C:\\WINDOWS",
+    "windows_tracing_flags": "3",
+    "windows_tracing_logfile": "C:\\BVTBin\\Tests\\installpackage\\csilogfile.log"
+  },
+  "sharedObjects": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\WINDOWS\\SYSTEM32\\ntdll.dll",
+    "C:\\WINDOWS\\System32\\KERNEL32.DLL",
+    "C:\\WINDOWS\\System32\\KERNELBASE.dll",
+    "C:\\WINDOWS\\System32\\WS2_32.dll",
+    "C:\\WINDOWS\\System32\\RPCRT4.dll",
+    "C:\\WINDOWS\\SYSTEM32\\dbghelp.dll",
+    "C:\\WINDOWS\\System32\\ADVAPI32.dll",
+    "C:\\WINDOWS\\System32\\ucrtbase.dll",
+    "C:\\WINDOWS\\System32\\msvcrt.dll",
+    "C:\\WINDOWS\\System32\\sechost.dll",
+    "C:\\WINDOWS\\System32\\USER32.dll",
+    "C:\\WINDOWS\\System32\\win32u.dll",
+    "C:\\WINDOWS\\System32\\GDI32.dll",
+    "C:\\WINDOWS\\System32\\gdi32full.dll",
+    "C:\\WINDOWS\\System32\\msvcp_win.dll",
+    "C:\\WINDOWS\\System32\\PSAPI.DLL",
+    "C:\\WINDOWS\\System32\\CRYPT32.dll",
+    "C:\\WINDOWS\\System32\\MSASN1.dll",
+    "C:\\WINDOWS\\System32\\bcrypt.dll",
+    "C:\\WINDOWS\\SYSTEM32\\IPHLPAPI.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\USERENV.dll",
+    "C:\\WINDOWS\\System32\\profapi.dll",
+    "C:\\WINDOWS\\SYSTEM32\\WINMM.dll",
+    "C:\\WINDOWS\\SYSTEM32\\winmmbase.dll",
+    "C:\\WINDOWS\\System32\\cfgmgr32.dll",
+    "C:\\WINDOWS\\System32\\bcryptPrimitives.dll",
+    "C:\\WINDOWS\\System32\\IMM32.DLL",
+    "C:\\WINDOWS\\System32\\powrprof.dll",
+    "C:\\WINDOWS\\System32\\UMPDC.dll",
+    "C:\\WINDOWS\\SYSTEM32\\CRYPTBASE.DLL",
+    "C:\\WINDOWS\\system32\\uxtheme.dll",
+    "C:\\WINDOWS\\System32\\combase.dll",
+    "C:\\WINDOWS\\system32\\mswsock.dll",
+    "C:\\WINDOWS\\System32\\kernel.appcore.dll",
+    "C:\\WINDOWS\\System32\\NSI.dll",
+    "C:\\WINDOWS\\SYSTEM32\\dhcpcsvc6.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\dhcpcsvc.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\DNSAPI.dll",
+    "C:\\WINDOWS\\system32\\napinsp.dll",
+    "C:\\WINDOWS\\system32\\pnrpnsp.dll",
+    "C:\\WINDOWS\\System32\\winrnr.dll",
+    "C:\\WINDOWS\\system32\\NLAapi.dll",
+    "C:\\WINDOWS\\system32\\wshbth.dll"
+  ]
+}

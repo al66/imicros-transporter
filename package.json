@@ -39,17 +39,17 @@
     "benchmarkify": "^2.1.2",
     "bluebird": "^3.7.2",
     "cote": "^1.0.0",
-    "kafka-node": "^5.0.0",
+    "ioredis": "^4.17.3",
+    "kafkajs": "^1.12.0",
     "nanoservices": "0.0.11",
     "nats": "^1.4.9",
     "nats-hemera": "^7.0.2",
-    "seneca": "^3.21.2",
+    "seneca": "^3.22.0",
     "seneca-nats-transport": "^2.0.3",
     "wtfnode": "^0.8.1"
   },
   "dependencies": {
-    "kafkajs": "^1.12.0",
-    "moleculer": "^0.14.7",
+    "moleculer": "^0.14.8",
     "uuid": "^8.2.0"
   }
 }
