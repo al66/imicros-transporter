@@ -41,7 +41,7 @@ async function fetchTopics () {
         if (meta.topics && meta.topics.length > 0) {
             for(let i = 0; i < meta.topics.length; i++) {
                 let topic = meta.topics[i];
-                if (/^(service|MOL|performance)/.test(topic.name)) {
+                if (/^(service|MOL|performance|test|TEST|erster|SERVICE|\.EVENTB\.)/.test(topic.name)) {
                     try {
                         await deleteTopic(topic.name);
                         console.log("Topic deleted", { topic: topic.name });
