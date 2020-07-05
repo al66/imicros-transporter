@@ -85,15 +85,23 @@ let nats2;
 
 })();
 
-// KAFKA
+// KAFKA-NATS
 let kafka1;
 let kafka2;
 (async function () {
 
+    const opts = {
+        kafka: {
+            brokers: ["192.168.2.124:9092"]
+        },
+        nats: {
+            url: "nats://192.168.2.124:4222"
+        }
+    };
     const { ServiceBroker } = require("moleculer");
-    const Transporter = require("../lib/transporterB");
-    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter({ brokers: ["192.168.2.124:9092"] }), disableBalancer: true });
-    kafka2 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter({ brokers: ["192.168.2.124:9092"] }), disableBalancer: true });
+    const { KafkaNats } = require("../index");
+    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new KafkaNats(opts), disableBalancer: true });
+    kafka2 = new ServiceBroker({ nodeID: uuid(), transporter: new KafkaNats(opts), disableBalancer: true });
 
     await kafka2.createService({
         name: "math",
@@ -107,7 +115,7 @@ let kafka2;
     await kafka2.start();
     await kafka1.waitForServices(["math"]);
     
-    bench.add("kafka", done => {
+    bench.add("kafka-nats", done => {
         kafka1.call("math.add", { a: 5, b: 3 }).then(done);
     });
 
@@ -116,7 +124,7 @@ let kafka2;
 Promise.delay(10000).then(() => {
 
     return benchmark.run([bench]).then(() => {
-        /*
+
         local.stop();
         
         tcp1.stop();
@@ -124,7 +132,6 @@ Promise.delay(10000).then(() => {
 
         nats1.stop();
         nats2.stop();
-        */
 
         kafka1.stop();
         kafka2.stop();

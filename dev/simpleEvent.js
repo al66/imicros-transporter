@@ -4,7 +4,7 @@ const { v4: uuid } = require("uuid");
 const wtf = require("wtfnode");
 
 const { ServiceBroker } = require("moleculer");
-const Transporter = require("../lib/kafka-nats-2");
+const Transporter = require("../lib/kafka-nats");
 const Events = require("../lib/middleware");
 
 process.env.REDIS_HOST = "192.168.2.124";
@@ -14,7 +14,11 @@ process.env.REDIS_DB = 0;
 
 const transporterSettings = {
     kafka: {
-        brokers: ["192.168.2.124:9092"]
+        brokers: ["192.168.2.124:9092"],
+        retry: {
+            initialRetryTime: 100,          // default 100
+            retries: 8                      // default 8
+        }
     },
     nats: {
         url: "nats://192.168.2.124:4222"
@@ -36,59 +40,45 @@ for (let i=0; i<100; i++) anyData.push(uuid());
 
 // KAFKA
 let kafka1;
-let kafka2;
-let kafka3;
 (async function () {
 
-    const n = 1000000;
-    const p = 20000;
+    const n = 20000;    
+    const p = 10000;
 
+    const c = 1;
+    
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
     
-    function setImmediatePromise() {
-        return new Promise((resolve) => {
-            setImmediate(() => resolve());
-        });
-    }    
-    
     let received = 0;
     kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings), disableBalancer: true, middlewares: [Events] });
 
-    kafka2 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings), disableBalancer: true });
-    await kafka2.createService({
-        name: "events",
-        events: {
-            "account.created": {
-                group: "worker",
-                handler(ctx) {
-                    received++;
-                    // this.logger.info("Event received, parameters OK!", ctx.params);
+    let listener = [];
+    let calls = [];
+    for ( let i = 0; i < c; i ++) {
+        let kafka = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings), disableBalancer: true });
+        await kafka.createService({
+            name: "events",
+            events: {
+                "account.created": {
+                    group: "worker",
+                    handler(ctx) {
+                        received++;
+                        calls[this.broker.nodeID] ? calls[this.broker.nodeID]++ : calls[this.broker.nodeID] = 1;
+                        // this.logger.info("Event received, parameters OK!", ctx.params);
+                    }
                 }
             }
-        }
-    });
-    kafka3 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter({ brokers: ["192.168.2.124:9092"] }), disableBalancer: true });
-    kafka3.createService({
-        name: "events",
-        events: {
-            "account.created": {
-                group: "worker",
-                handler(ctx) {
-                    received++;
-                    // this.logger.info("Event received, parameters OK!", ctx.params);
-                }
-            }
-        }
-    });
+        });
+        await kafka.start();
+        await kafka.waitForServices(["events"]);
+        listener.push(kafka);
+    }
     
     await kafka1.start();
-    await kafka2.start();
-    // await kafka3.start();
-    // await sleep(1000);
-    
-    // await kafka1.waitForServices(["events"]);
+    await sleep(2000);
+    // await kafka1.waitForServices(["events"]); // doesn't work, doesn't wait for subscriptions.. :-(
 
     let ts = Date.now();
     let count = 0;
@@ -123,27 +113,32 @@ let kafka3;
             "time (ms)": tf-ts
         }
     });
-    while (received < count) { 
-        await sleep(10);
-    }
-    tf = Date.now();
-    console.log({
-        "received completed": {
-            "handler calls": count,
-            "received events": received,
-            "time (ms)": tf-ts
-        }
-    });
-    
-    await kafka1.stop();
-    await kafka2.stop();
-    // await kafka3.stop();
+    let timer;
+    async function ready () {
+        if (received < count) return;
+        clearInterval(timer);
+        
+        tf = Date.now();
+        console.log({
+            "received completed": {
+                "handler calls": count,
+                "received events": received,
+                "by nodes": calls,
+                "time (ms)": tf-ts
+            }
+        });
 
-    console.log("-------------------");
-    wtf.dump();
-    // console.log("handles:", process._getActiveHandles());
-    // console.log("requests:", process._getActiveRequests());
-    console.log("-------------------\n");
+        await kafka1.stop();
+        await Promise.all(listener.map(async (kafka) => await kafka.stop()));
+
+        console.log("-------------------");
+        wtf.dump();
+        // console.log("handles:", process._getActiveHandles());
+        // console.log("requests:", process._getActiveRequests());
+        console.log("-------------------\n");
+    
+    }
+    timer = setInterval(ready, 10);
     
 })();
 

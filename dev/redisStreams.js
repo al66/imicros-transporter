@@ -177,8 +177,8 @@ async function info () {
     console.log(groups);
 }
 
-let n = 1000000;
-let p = 10000;
+let n = 500000;
+let p = 20000;
 
 async function run () {
     

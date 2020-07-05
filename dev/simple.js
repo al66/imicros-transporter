@@ -31,54 +31,34 @@ const transporterSettings = {
 
 // KAFKA
 let kafka1;
-let kafka2;
-let kafka3;
-// let kafka4;
 (async function () {
 
-    const n = 1000000;
-    const p = 20000;
+    const n = 100000;
+    const p = 10000;
     
+    const c = 3;
+
     kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings), disableBalancer: true });
 
-    kafka2 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings), disableBalancer: true });
-    kafka2.createService({
-        name: "math",
-        actions: {
-            add(ctx) {
-                this.logger.debug("math.add", { nodeID: this.broker.nodeID });
-                return ctx.params.a + ctx.params.b;
+    let listener = [];
+    let calls = [];
+    for ( let i = 0; i < c; i ++) {
+        let kafka = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings), disableBalancer: true });
+        await kafka.createService({
+            name: "math",
+            actions: {
+                add(ctx) {
+                    this.logger.debug("math.add", { nodeID: this.broker.nodeID });
+                    calls[this.broker.nodeID] ? calls[this.broker.nodeID]++ : calls[this.broker.nodeID] = 1;
+                    return ctx.params.a + ctx.params.b;
+                }
             }
-        }
-    });
-    kafka3 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings), disableBalancer: true });
-    kafka3.createService({
-        name: "math",
-        actions: {
-            add(ctx) {
-                this.logger.debug("math.add", { nodeID: this.broker.nodeID });
-                return ctx.params.a + ctx.params.b;
-            }
-        }
-    });
-    /*
-    kafka4 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings), disableBalancer: true });
-    kafka4.createService({
-        name: "math",
-        actions: {
-            add(ctx) {
-                this.logger.debug("math.add", { nodeID: this.broker.nodeID });
-                return ctx.params.a + ctx.params.b;
-            }
-        }
-    });
-    */
+        });
+        await kafka.start();
+        listener.push(kafka);
+    }
     
     await kafka1.start();
-    await kafka2.start();
-    await kafka3.start();
-    // await kafka4.start();
-    
     await kafka1.waitForServices(["math"]);
 
     let ts = Date.now();
@@ -107,6 +87,7 @@ let kafka3;
     console.log({
         "handler completed": {
             "handler calls": count,
+            "by handler": calls,
             "time (ms)": tf-ts
         }
     });
@@ -114,9 +95,7 @@ let kafka3;
     kafka1.logger.debug("result", { result });
     
     await kafka1.stop();
-    await kafka2.stop();
-    await kafka3.stop();
-    // await kafka4.stop();
+    await Promise.all(listener.map(async (kafka) => await kafka.stop()));
 
     console.log("-------------------");
     wtf.dump();

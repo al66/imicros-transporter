@@ -4,5 +4,6 @@
 "use strict";
 
 module.exports = {
-    Transporter: require("./lib/transporter")
+    KafkaNats: require("./lib/kafka-nats"),
+    EventsMiddleware: require("./lib/middleware")
 };

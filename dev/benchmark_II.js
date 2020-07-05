@@ -3,15 +3,17 @@
 const { v4: uuid } = require("uuid");
 
 
-const n = 1000;
-const p = 1000;
+const n = 100000;
+const p = 10000;
 
 let result = [];
+let running = 0;
 
 // Local
 let local;
 (async function () {
-
+    running++;
+    
     const { ServiceBroker } = require("moleculer");
     local = new ServiceBroker({ nodeID: "node-1" });
 
@@ -35,7 +37,7 @@ let local;
         }));
     }
     let tf = Date.now();
-    console.log({
+    result.push({
         "test": "local",
         "completed": {
             "calls": count,
@@ -45,6 +47,7 @@ let local;
 
     await local.stop();
     
+    running--;
 })();
 
 // TCP
@@ -52,6 +55,7 @@ let transporterTCP = "TCP";1;
 let tcp1;
 let tcp2;
 (async function () {
+    running++;
 
     const { ServiceBroker } = require("moleculer");
     tcp1 = new ServiceBroker({ nodeID: "node-1", transporter: transporterTCP });
@@ -80,7 +84,7 @@ let tcp2;
         }));
     }
     let tf = Date.now();
-    console.log({
+    result.push({
         "test": "TCP",
         "completed": {
             "calls": count,
@@ -91,6 +95,7 @@ let tcp2;
     await tcp1.stop();
     await tcp2.stop();
     
+    running--;
 })();
 
 // NATS
@@ -98,6 +103,7 @@ let transporterNATS = "nats://192.168.2.124:4222";
 let nats1;
 let nats2;
 (async function () {
+    running++;
 
     const { ServiceBroker } = require("moleculer");
     nats1 = new ServiceBroker({ nodeID: "node-1", transporter: transporterNATS });
@@ -126,7 +132,7 @@ let nats2;
         }));
     }
     let tf = Date.now();
-    console.log({
+    result.push({
         "test": "NATS",
         "completed": {
             "calls": count,
@@ -137,17 +143,27 @@ let nats2;
     await nats1.stop();
     await nats2.stop();
     
+    running--;
 })();
 
 // KAFKA
 let kafka1;
 let kafka2;
 (async function () {
+    running++;
 
+    const opts = {
+        kafka: {
+            brokers: ["192.168.2.124:9092"]
+        },
+        nats: {
+            url: "nats://192.168.2.124:4222"
+        }
+    };
     const { ServiceBroker } = require("moleculer");
-    const Transporter = require("../lib/transporterB");
-    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter({ brokers: ["192.168.2.124:9092"] }), disableBalancer: true });
-    kafka2 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter({ brokers: ["192.168.2.124:9092"] }), disableBalancer: true });
+    const Transporter = require("../lib/kafka-nats");
+    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(opts), disableBalancer: true });
+    kafka2 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(opts), disableBalancer: true });
 
     await kafka2.createService({
         name: "math",
@@ -171,8 +187,8 @@ let kafka2;
         }));
     }
     let tf = Date.now();
-    console.log({
-        "test": "kafka",
+    result.push({
+        "test": "kafka-nats",
         "completed": {
             "calls": count,
             "time (ms)": tf-ts
@@ -181,6 +197,17 @@ let kafka2;
 
     await kafka1.stop();
     await kafka2.stop();
-
+    
+    running--;
 })();
 
+(async function () {
+    let timer;
+    function ready() {
+        if (running <= 0) {
+            console.log(result);
+            clearInterval(timer);
+        }
+    }
+    timer = setInterval(ready, 50);
+})();

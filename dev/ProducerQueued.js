@@ -35,8 +35,8 @@ const createTopic = async function (topic, numPartitions) {
     try {
         await admin.createTopics({
             // validateOnly: true,  // default false
-            waitForLeaders: false,  // default true
-            timeout: 5000,          // default: 1000 (ms)
+            waitForLeaders: true,   // default true
+            timeout: 30000,         // default: 1000 (ms)
             topics: topics,
         });
         await admin.disconnect();

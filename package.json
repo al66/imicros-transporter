@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "author": "Andreas Leinen <andreas.leinen@imicros.de> (www.imicros.de)",
   "license": "MIT",
-  "description": "Kafka transporter for Moleculer services",
+  "description": "Two way transporter for Moleculer services (Kafka/NATS)",
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage --no-cache --config=travis.js --silent",
