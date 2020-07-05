@@ -3,15 +3,15 @@
 [![Coverage Status](https://coveralls.io/repos/github/al66/imicros-transporter/badge.svg?branch=master)](https://coveralls.io/github/al66/imicros-transporter?branch=master)
 [![Development Status](https://img.shields.io/badge/status-experimental-orange)](https://img.shields.io/badge/status-experimental-orange)
 
-Two way transporter for Moleculer services
-- actions/responses and registry messages non-persistent via NATS
-- events persistent via KAFKA
+Two way transporter for [Moleculer](https://github.com/moleculerjs/moleculer) services
+- actions/responses and registry messages non-persistent via [NATS](https://nats.io/) 
+- events persistent via [kafka](https://kafka.apache.org/) 
 
 ## Installation
 ```
 $ npm install imicros-transporter --save
 ```
-Requires installation of the additonal modules nats and kafkjs
+Requires installation of the additional modules [nats](https://www.npmjs.com/package/nats) and [kafkajs](https://www.npmjs.com/package/kafkajs)
 
 # Usage
 
