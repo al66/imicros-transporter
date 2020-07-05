@@ -1,6 +1,6 @@
 {
   "name": "imicros-transporter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Andreas Leinen <andreas.leinen@imicros.de> (www.imicros.de)",
   "license": "MIT",
   "description": "Two way transporter for Moleculer services (Kafka/NATS)",
