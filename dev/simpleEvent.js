@@ -4,8 +4,8 @@ const { v4: uuid } = require("uuid");
 const wtf = require("wtfnode");
 
 const { ServiceBroker } = require("moleculer");
-const Transporter = require("../lib/kafka-nats");
-const Events = require("../lib/middleware");
+const { KafkaNats } = require("../index");
+const { EventsMiddelware } = require("../index");
 
 process.env.REDIS_HOST = "192.168.2.124";
 process.env.REDIS_PORT = 6379;
@@ -52,12 +52,12 @@ let kafka1;
     }
     
     let received = 0;
-    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings), disableBalancer: true, middlewares: [Events] });
+    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new KafkaNats(transporterSettings), disableBalancer: true, middlewares: [EventsMiddelware] });
 
     let listener = [];
     let calls = [];
     for ( let i = 0; i < c; i ++) {
-        let kafka = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings), disableBalancer: true });
+        let kafka = new ServiceBroker({ nodeID: uuid(), transporter: new KafkaNats(transporterSettings), disableBalancer: true });
         await kafka.createService({
             name: "events",
             events: {
