@@ -42,8 +42,8 @@ for (let i=0; i<100; i++) anyData.push(uuid());
 let kafka1;
 (async function () {
 
-    const n = 20000;    
-    const p = 10000;
+    const n = 2;    
+    const p = 2;
 
     const c = 1;
     
@@ -54,28 +54,6 @@ let kafka1;
     let received = 0;
     kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new KafkaNats(transporterSettings), disableBalancer: true, middlewares: [EventsMiddleware] });
 
-    let listener = [];
-    let calls = [];
-    for ( let i = 0; i < c; i ++) {
-        let kafka = new ServiceBroker({ nodeID: uuid(), transporter: new KafkaNats(transporterSettings), disableBalancer: true });
-        await kafka.createService({
-            name: "events",
-            events: {
-                "account.created": {
-                    group: "worker",
-                    handler(ctx) {
-                        received++;
-                        calls[this.broker.nodeID] ? calls[this.broker.nodeID]++ : calls[this.broker.nodeID] = 1;
-                        // this.logger.info("Event received, parameters OK!", ctx.params);
-                    }
-                }
-            }
-        });
-        await kafka.start();
-        await kafka.waitForServices(["events"]);
-        listener.push(kafka);
-    }
-    
     await kafka1.start();
     await sleep(2000);
     // await kafka1.waitForServices(["events"]); // doesn't work, doesn't wait for subscriptions.. :-(
@@ -105,6 +83,34 @@ let kafka1;
             }
         });
     }
+
+    let listener = [];
+    let calls = [];
+    for ( let i = 0; i < c; i ++) {
+        let kafka = new ServiceBroker({ 
+            nodeID: uuid(), 
+            transporter: new KafkaNats(transporterSettings), 
+            disableBalancer: true,
+            logLevel: "info" //"debug"
+        });
+        await kafka.createService({
+            name: "events",
+            events: {
+                "account.created": {
+                    group: "worker",
+                    handler(ctx) {
+                        received++;
+                        calls[this.broker.nodeID] ? calls[this.broker.nodeID]++ : calls[this.broker.nodeID] = 1;
+                        this.logger.info("Event received, parameters OK!", ctx.params);
+                    }
+                }
+            }
+        });
+        await kafka.start();
+        await kafka.waitForServices(["events"]);
+        listener.push(kafka);
+    }
+    
     let tf = Date.now();
     console.log({
         "emmited completed": {
@@ -115,7 +121,12 @@ let kafka1;
     });
     let timer;
     async function ready () {
-        if (received < count) return;
+        if (received < count) {
+            console.log({
+                "received events": received
+            });
+            return;
+        }
         clearInterval(timer);
         
         tf = Date.now();
@@ -138,7 +149,7 @@ let kafka1;
         console.log("-------------------\n");
     
     }
-    timer = setInterval(ready, 10);
+    timer = setInterval(ready, 1000);
     
 })();
 
