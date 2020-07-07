@@ -38,12 +38,12 @@ let kafka1;
     
     const c = 3;
 
-    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings), disableBalancer: true });
+    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings)/*, disableBalancer: true */});
 
     let listener = [];
     let calls = [];
     for ( let i = 0; i < c; i ++) {
-        let kafka = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings), disableBalancer: true });
+        let kafka = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings)/*, disableBalancer: true */});
         await kafka.createService({
             name: "math",
             actions: {

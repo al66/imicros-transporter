@@ -52,7 +52,7 @@ let kafka1;
     }
     
     let received = 0;
-    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new KafkaNats(transporterSettings), disableBalancer: true, middlewares: [EventsMiddleware] });
+    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new KafkaNats(transporterSettings)/*, disableBalancer: true*/, middlewares: [EventsMiddleware] });
 
     await kafka1.start();
     await sleep(2000);

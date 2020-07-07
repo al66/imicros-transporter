@@ -45,19 +45,19 @@ let kafka1;
     const n = 20000;    
     const p = 10000;
 
-    const c = 1;
+    const c = 3;
     
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
     
     let received = 0;
-    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new KafkaNats(transporterSettings), disableBalancer: true, middlewares: [EventsMiddleware] });
+    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new KafkaNats(transporterSettings)/*, disableBalancer: true*/, middlewares: [EventsMiddleware] });
 
     let listener = [];
     let calls = [];
     for ( let i = 0; i < c; i ++) {
-        let kafka = new ServiceBroker({ nodeID: uuid(), transporter: new KafkaNats(transporterSettings), disableBalancer: true });
+        let kafka = new ServiceBroker({ nodeID: uuid(), transporter: new KafkaNats(transporterSettings)/*, disableBalancer: true*/ });
         await kafka.createService({
             name: "events",
             events: {
