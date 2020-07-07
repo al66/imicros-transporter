@@ -11,14 +11,14 @@ const { EventsMiddleware } = require("../index");
 
 const transporterSettings = {
     kafka: {
-        brokers: ["192.168.2.124:9092"],
+        brokers: process.env.KAFKA_BROKER ? [process.env.KAFKA_BROKER] : ["127.0.0.1:9092"],
         retry: {
             initialRetryTime: 100,          // default 100
             retries: 8                      // default 8
         }
     },
     nats: {
-        url: "nats://192.168.2.124:4222"
+        url: process.env.NATS_URL || "127.0.0.1:4222"
     }
 };
 
