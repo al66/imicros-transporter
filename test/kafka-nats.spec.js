@@ -40,6 +40,7 @@ const eventSubscriber = {
     events: {
         "account.created": {
             group: "worker",
+            // strategy: "RoundRobin",
             handler(ctx) {
                 calls.push({ node: this.broker.nodeID, result: Number(ctx.params.a) + Number(ctx.params.b) });
                 // calls[this.broker.nodeID] ? calls[this.broker.nodeID]++ : calls[this.broker.nodeID] = 1;
@@ -215,6 +216,8 @@ describe("Test normal calling with versioned services", () => {
 
 describe("Test events", () => {
 
+    const n = 100;
+    
     const [master, slaveA, slaveB, slaveC] = ["master", "slaveA", "slaveB", "slaveC"].map(nodeID => {
         return new ServiceBroker({
             namespace: "events",
@@ -223,8 +226,8 @@ describe("Test events", () => {
             // transporter: "nats://192.168.2.124:4222",
             // disableBalancer: true, 
             middlewares: [EventsMiddleware],
-            // logLevel: "debug" //"debug"
-            logger: false 
+            logLevel: "debug" //"debug"
+            // logger: false 
         });        
     });
 
@@ -240,56 +243,56 @@ describe("Test events", () => {
         calls = [];
         return master.waitForServices("events")
                 .delay(500)
-                .then(() => Promise.all(Array.from(Array(6),(x,i) => i).map(() => master.emit("account.created", { a: 50, b: 13 }))))
+                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { a: 50, b: 13 }))))
                 .delay(500)
                 .catch(protectReject)
                 .then(() => {
-                    // console.log(calls);
-                    expect(calls).toHaveLength(6);
-                    expect(calls.filter(o => o.result == 63)).toHaveLength(6);
-                    expect(calls.filter(o => o.node == "slaveA")).toHaveLength(3);
-                    expect(calls.filter(o => o.node == "slaveB")).toHaveLength(3);
+                    console.log(calls);
+                    expect(calls).toHaveLength(n);
+                    expect(calls.filter(o => o.result == 63)).toHaveLength(n);
+                    expect(calls.filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
+                    expect(calls.filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
                 });
     });
 
     it("start slaveC", () => {
-        return slaveC.start().delay(500);
-    });
+        return slaveC.start().delay(5000);
+    }, 30000);
 
     it("should process events  with balancing between 3 nodes", () => {
         calls = [];
         return master.waitForServices("events")
                 .delay(500)
-                .then(() => Promise.all(Array.from(Array(6),(x,i) => i).map(() => master.emit("account.created", { a: 20, b: 30 }))))
+                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { a: 20, b: 30 }))))
                 .delay(500)
                 .catch(protectReject)
                 .then(() => {
-                    // console.log(calls);
-                    expect(calls).toHaveLength(6);
-                    expect(calls.filter(o => o.result == 50)).toHaveLength(6);
-                    expect(calls.filter(o => o.node == "slaveA")).toHaveLength(2);
-                    expect(calls.filter(o => o.node == "slaveB")).toHaveLength(2);
-                    expect(calls.filter(o => o.node == "slaveC")).toHaveLength(2);
+                    console.log(calls);
+                    expect(calls).toHaveLength(n);
+                    expect(calls.filter(o => o.result == 50)).toHaveLength(n);
+                    expect(calls.filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
+                    expect(calls.filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
+                    expect(calls.filter(o => o.node == "slaveC").length).toBeGreaterThanOrEqual(1);
                 });
     });
 
     it("stop slaveC", () => {
-        return slaveC.stop().delay(500);
-    });
+        return slaveC.stop().delay(5000);
+    }, 30000);
 
     it("should process events without slaveC node", () => {
         calls = [];
         return master.waitForServices("events")
                 .delay(500)
-                .then(() => Promise.all(Array.from(Array(6),(x,i) => i).map(() => master.emit("account.created", { a: 20, b: 30 }))))
+                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { a: 20, b: 30 }))))
                 .delay(500)
                 .catch(protectReject)
                 .then(() => {
                     // console.log(calls);
-                    expect(calls).toHaveLength(6);
-                    expect(calls.filter(o => o.result == 50)).toHaveLength(6);
-                    expect(calls.filter(o => o.node == "slaveA")).toHaveLength(3);
-                    expect(calls.filter(o => o.node == "slaveB")).toHaveLength(3);
+                    expect(calls).toHaveLength(n);
+                    expect(calls.filter(o => o.result == 50)).toHaveLength(n);
+                    expect(calls.filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
+                    expect(calls.filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
                     expect(calls.filter(o => o.node == "slaveC")).toHaveLength(0);
                 });
     });
@@ -297,18 +300,21 @@ describe("Test events", () => {
 
 });
 
+
 describe("Test persistent events", () => {
 
+    const n = 100;
+    
     const [master, slaveA, slaveB, slaveC] = ["master", "slaveA", "slaveB", "slaveC"].map(nodeID => {
         return new ServiceBroker({
-            namespace: "persistent-events",
+            namespace: "events",
             nodeID: nodeID,
             transporter: new KafkaNats(transporterSettings),
             // transporter: "nats://192.168.2.124:4222",
-            disableBalancer: true, 
+            // disableBalancer: true, 
             middlewares: [EventsMiddleware],
-            // logLevel: "debug" //"debug"
-            logger: false 
+            logLevel: "info" //"debug"
+            // logger: false 
         });        
     });
 
@@ -324,7 +330,7 @@ describe("Test persistent events", () => {
         calls = [];
         return master.start()
                 .delay(500)
-                .then(() => Promise.all(Array.from(Array(6),(x,i) => i).map(() => master.emit("account.created", { a: 50, b: 13 }))))
+                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { a: 50, b: 13 }))))
                 .delay(500);
                 //.catch(protectReject);
     });
@@ -334,8 +340,8 @@ describe("Test persistent events", () => {
         return master.stop().delay(500);
     });
 
-    it("start slaves", async () => {
-        return await Promise.all([slaveA.start(), slaveB.start(), slaveC.start()]).delay(1000);
+    it("start slaves", () => {
+        return Promise.all([slaveA.start(), slaveB.start(), slaveC.start()]).delay(5000);
     }, 30000);
 
     
@@ -345,8 +351,8 @@ describe("Test persistent events", () => {
                 // .catch(protectReject)
                 .then(() => {
                     // console.log(calls);
-                    expect(calls).toHaveLength(6);
-                    expect(calls.filter(o => o.result == 63)).toHaveLength(6);
+                    expect(calls).toHaveLength(n);
+                    expect(calls.filter(o => o.result == 63)).toHaveLength(n);
                     expect(calls.filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
                     expect(calls.filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
                     expect(calls.filter(o => o.node == "slaveC").length).toBeGreaterThanOrEqual(1);
@@ -355,3 +361,4 @@ describe("Test persistent events", () => {
 
 
 });
+
