@@ -80,6 +80,7 @@ describe("Test streaming", () => {
 
     // Load services
     [slaveA, slaveB].forEach(broker => broker.createService(AESService));
+    // [slaveA].forEach(broker => broker.createService(AESService));
 
     let originalHash;
     
