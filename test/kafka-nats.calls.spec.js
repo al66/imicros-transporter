@@ -34,22 +34,6 @@ const mathService = {
     }
 };
 
-let calls = [];
-const eventSubscriber = {
-    name: "events",
-    events: {
-        "account.created": {
-            group: "worker",
-            // strategy: "RoundRobin",
-            handler(ctx) {
-                calls.push({ node: this.broker.nodeID, result: Number(ctx.params.a) + Number(ctx.params.b) });
-                // calls[this.broker.nodeID] ? calls[this.broker.nodeID]++ : calls[this.broker.nodeID] = 1;
-                // this.logger.info("Event received, parameters OK!", ctx.params);
-            }
-        }
-    }
-};
-
 function protectReject(err) {
     if (err && err.stack) {
         console.error(err);
@@ -66,7 +50,7 @@ describe("Test normal calling", () => {
             nodeID: nodeID,
             transporter: new KafkaNats(transporterSettings),
             // transporter: "nats://192.168.2.124:4222",
-            // disableBalancer: true, 
+            // disableBalancer: true,                    // does not work with streaming!!!! - refer to transit.js !
             middlewares: [EventsMiddleware],
             logger: false 
         });        
@@ -150,25 +134,25 @@ describe("Test normal calling", () => {
 
 describe("Test normal calling with versioned services", () => {
 
-		// Creater brokers
+    // Creater brokers
     const [master, slaveA, slaveB, slaveC] = ["master", "slaveA", "slaveB", "slaveC"].map(nodeID => {
         return new ServiceBroker({
             namespace: "version-call",
             nodeID: nodeID,
             transporter: new KafkaNats(transporterSettings),
             // transporter: "nats://192.168.2.124:4222",
-            // disableBalancer: true, 
+            // disableBalancer: true,                        // does not work with streaming!!!! - refer to transit.js !
             middlewares: [EventsMiddleware],
             logger: false 
         });        
     });     
      
-		// Load services
+    // Load services
     slaveA.createService(Object.assign({}, mathService, { version: 2 }));
     slaveB.createService(Object.assign({}, mathService, { version: "beta" }));
     slaveC.createService(mathService);
 
-		// Start & Stop
+    // Start & Stop
     beforeAll(() => Promise.all([master.start(), slaveA.start(), slaveB.start(), slaveC.start()]));
     afterAll(() => Promise.all([master.stop(), slaveA.stop(), slaveB.stop(), slaveC.stop()]));
 
@@ -210,154 +194,6 @@ describe("Test normal calling with versioned services", () => {
                 expect(res.filter(o => o.node == "slaveC")).toHaveLength(6);
             });
     });
-
-
-});
-
-describe("Test events", () => {
-
-    const n = 100;
-    
-    const [master, slaveA, slaveB, slaveC] = ["master", "slaveA", "slaveB", "slaveC"].map(nodeID => {
-        return new ServiceBroker({
-            namespace: "events",
-            nodeID: nodeID,
-            transporter: new KafkaNats(transporterSettings),
-            // transporter: "nats://192.168.2.124:4222",
-            // disableBalancer: true, 
-            middlewares: [EventsMiddleware],
-            logLevel: "debug" //"debug"
-            // logger: false 
-        });        
-    });
-
-    // Load services
-    [slaveA, slaveB, slaveC].forEach(broker => broker.createService(eventSubscriber));
-
-    // Start & Stop
-    beforeAll(() => Promise.all([master.start(), slaveA.start(), slaveB.start()]));
-    afterAll(() => Promise.all([master.stop(), slaveA.stop(), slaveB.stop()]));
-    
-    // describe("Test calls", () => {
-    it("should process events  with balancing between 2 nodes", () => {
-        calls = [];
-        return master.waitForServices("events")
-                .delay(500)
-                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { a: 50, b: 13 }))))
-                .delay(500)
-                .catch(protectReject)
-                .then(() => {
-                    console.log(calls);
-                    expect(calls).toHaveLength(n);
-                    expect(calls.filter(o => o.result == 63)).toHaveLength(n);
-                    expect(calls.filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
-                    expect(calls.filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
-                });
-    });
-
-    it("start slaveC", () => {
-        return slaveC.start().delay(5000);
-    }, 30000);
-
-    it("should process events  with balancing between 3 nodes", () => {
-        calls = [];
-        return master.waitForServices("events")
-                .delay(500)
-                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { a: 20, b: 30 }))))
-                .delay(500)
-                .catch(protectReject)
-                .then(() => {
-                    console.log(calls);
-                    expect(calls).toHaveLength(n);
-                    expect(calls.filter(o => o.result == 50)).toHaveLength(n);
-                    expect(calls.filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
-                    expect(calls.filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
-                    expect(calls.filter(o => o.node == "slaveC").length).toBeGreaterThanOrEqual(1);
-                });
-    });
-
-    it("stop slaveC", () => {
-        return slaveC.stop().delay(5000);
-    }, 30000);
-
-    it("should process events without slaveC node", () => {
-        calls = [];
-        return master.waitForServices("events")
-                .delay(500)
-                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { a: 20, b: 30 }))))
-                .delay(500)
-                .catch(protectReject)
-                .then(() => {
-                    // console.log(calls);
-                    expect(calls).toHaveLength(n);
-                    expect(calls.filter(o => o.result == 50)).toHaveLength(n);
-                    expect(calls.filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
-                    expect(calls.filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
-                    expect(calls.filter(o => o.node == "slaveC")).toHaveLength(0);
-                });
-    });
-
-
-});
-
-
-describe("Test persistent events", () => {
-
-    const n = 100;
-    
-    const [master, slaveA, slaveB, slaveC] = ["master", "slaveA", "slaveB", "slaveC"].map(nodeID => {
-        return new ServiceBroker({
-            namespace: "events",
-            nodeID: nodeID,
-            transporter: new KafkaNats(transporterSettings),
-            // transporter: "nats://192.168.2.124:4222",
-            // disableBalancer: true, 
-            middlewares: [EventsMiddleware],
-            logLevel: "info" //"debug"
-            // logger: false 
-        });        
-    });
-
-    // Load services
-    [slaveA, slaveB, slaveC].forEach(broker => broker.createService(eventSubscriber));
-
-    // Start & Stop
-    // beforeAll(() => Promise.all([master.start()]));
-    afterAll(() => Promise.all([slaveA.stop(), slaveB.stop(), slaveC.stop()]));
-    
-
-    it("start master and emit events", () => {
-        calls = [];
-        return master.start()
-                .delay(500)
-                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { a: 50, b: 13 }))))
-                .delay(500);
-                //.catch(protectReject);
-    });
-    
-    //  Doesn't work yet - event is ignored, when sender is down...
-    it("stop master", () => {
-        return master.stop().delay(500);
-    });
-
-    it("start slaves", () => {
-        return Promise.all([slaveA.start(), slaveB.start(), slaveC.start()]).delay(5000);
-    }, 30000);
-
-    
-    it("should process events  with balancing between 3 nodes", () => {
-        return slaveC.waitForServices("events")
-                .delay(500)
-                // .catch(protectReject)
-                .then(() => {
-                    // console.log(calls);
-                    expect(calls).toHaveLength(n);
-                    expect(calls.filter(o => o.result == 63)).toHaveLength(n);
-                    expect(calls.filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
-                    expect(calls.filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
-                    expect(calls.filter(o => o.node == "slaveC").length).toBeGreaterThanOrEqual(1);
-                });
-    }, 30000);
 
 
 });

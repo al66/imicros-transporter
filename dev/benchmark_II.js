@@ -162,8 +162,8 @@ let kafka2;
     };
     const { ServiceBroker } = require("moleculer");
     const Transporter = require("../lib/kafka-nats");
-    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(opts), disableBalancer: true });
-    kafka2 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(opts), disableBalancer: true });
+    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(opts) });
+    kafka2 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(opts) });
 
     await kafka2.createService({
         name: "math",

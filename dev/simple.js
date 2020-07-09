@@ -5,6 +5,7 @@ const wtf = require("wtfnode");
 
 const { ServiceBroker } = require("moleculer");
 const Transporter = require("../lib/kafka-nats");
+const { EventsMiddleware } = require("../index");
 
 process.env.REDIS_HOST = "192.168.2.124";
 process.env.REDIS_PORT = 6379;
@@ -38,12 +39,12 @@ let kafka1;
     
     const c = 3;
 
-    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings)/*, disableBalancer: true */});
+    kafka1 = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings), middlewares: [EventsMiddleware] });
 
     let listener = [];
     let calls = [];
     for ( let i = 0; i < c; i ++) {
-        let kafka = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings)/*, disableBalancer: true */});
+        let kafka = new ServiceBroker({ nodeID: uuid(), transporter: new Transporter(transporterSettings), middlewares: [EventsMiddleware] });
         await kafka.createService({
             name: "math",
             actions: {
