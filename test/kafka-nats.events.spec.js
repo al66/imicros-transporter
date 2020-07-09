@@ -30,7 +30,8 @@ const eventSubscriber = {
             group: "worker",
             // strategy: "RoundRobin",
             handler(ctx) {
-                calls.push({ node: this.broker.nodeID, result: Number(ctx.params.a) + Number(ctx.params.b) });
+                if (!calls[ctx.params.test]) calls[ctx.params.test] = [];
+                calls[ctx.params.test].push({ node: this.broker.nodeID, result: Number(ctx.params.a) + Number(ctx.params.b) });
                 // calls[this.broker.nodeID] ? calls[this.broker.nodeID]++ : calls[this.broker.nodeID] = 1;
                 // this.logger.info("Event received, parameters OK!", ctx.params);
             }
@@ -75,13 +76,13 @@ describe("Test events", () => {
         calls = [];
         return master.waitForServices("events")
                 .delay(5000)
-                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { a: 50, b: 13 }))))
+                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { test: "A", a: 50, b: 13 }))))
                 .delay(500)
                 .catch(protectReject)
                 .then(() => {
                     // console.log(calls);
-                    expect(calls).toHaveLength(n);
-                    expect(calls.filter(o => o.result == 63)).toHaveLength(n);
+                    expect(calls["A"]).toHaveLength(n);
+                    expect(calls["A"].filter(o => o.result == 63)).toHaveLength(n);
                     //expect(calls.filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
                     //expect(calls.filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
                 });
@@ -95,16 +96,16 @@ describe("Test events", () => {
         calls = [];
         return master.waitForServices("events")
                 .delay(500)
-                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { a: 20, b: 30 }))))
+                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { test: "B", a: 20, b: 30 }))))
                 .delay(500)
                 .catch(protectReject)
                 .then(() => {
                     // console.log(calls);
-                    expect(calls).toHaveLength(n);
-                    expect(calls.filter(o => o.result == 50)).toHaveLength(n);
-                    expect(calls.filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
-                    expect(calls.filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
-                    expect(calls.filter(o => o.node == "slaveC").length).toBeGreaterThanOrEqual(1);
+                    expect(calls["B"]).toHaveLength(n);
+                    expect(calls["B"].filter(o => o.result == 50)).toHaveLength(n);
+                    expect(calls["B"].filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
+                    expect(calls["B"].filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
+                    expect(calls["B"].filter(o => o.node == "slaveC").length).toBeGreaterThanOrEqual(1);
                 });
     });
 
@@ -116,16 +117,16 @@ describe("Test events", () => {
         calls = [];
         return master.waitForServices("events")
                 .delay(500)
-                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { a: 20, b: 30 }))))
+                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { test: "C", a: 20, b: 30 }))))
                 .delay(500)
                 .catch(protectReject)
                 .then(() => {
                     // console.log(calls);
-                    expect(calls).toHaveLength(n);
-                    expect(calls.filter(o => o.result == 50)).toHaveLength(n);
-                    expect(calls.filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
-                    expect(calls.filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
-                    expect(calls.filter(o => o.node == "slaveC")).toHaveLength(0);
+                    expect(calls["C"]).toHaveLength(n);
+                    expect(calls["C"].filter(o => o.result == 50)).toHaveLength(n);
+                    expect(calls["C"].filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
+                    expect(calls["C"].filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
+                    expect(calls["C"].filter(o => o.node == "slaveC")).toHaveLength(0);
                 });
     });
 
@@ -162,7 +163,7 @@ describe("Test persistent events", () => {
         calls = [];
         return master.start()
                 .delay(5000)
-                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { a: 50, b: 13 }))))
+                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { test: "D", a: 50, b: 13 }))))
                 .delay(500);
                 //.catch(protectReject);
     }, 30000);
@@ -183,11 +184,11 @@ describe("Test persistent events", () => {
                 // .catch(protectReject)
                 .then(() => {
                     // console.log(calls);
-                    expect(calls).toHaveLength(n);
-                    expect(calls.filter(o => o.result == 63)).toHaveLength(n);
-                    expect(calls.filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
-                    expect(calls.filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
-                    expect(calls.filter(o => o.node == "slaveC").length).toBeGreaterThanOrEqual(1);
+                    expect(calls["D"]).toHaveLength(n);
+                    expect(calls["D"].filter(o => o.result == 63)).toHaveLength(n);
+                    expect(calls["D"].filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
+                    expect(calls["D"].filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
+                    expect(calls["D"].filter(o => o.node == "slaveC").length).toBeGreaterThanOrEqual(1);
                 });
     }, 30000);
 
