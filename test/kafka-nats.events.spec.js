@@ -31,7 +31,7 @@ const eventSubscriber = {
             // strategy: "RoundRobin",
             handler(ctx) {
                 if (!calls[ctx.params.test]) calls[ctx.params.test] = [];
-                calls[ctx.params.test].push({ node: this.broker.nodeID, result: Number(ctx.params.a) + Number(ctx.params.b) });
+                calls[ctx.params.test].push({ node: this.broker.nodeID, result: Number(ctx.params.a) + Number(ctx.params.b), index: ctx.params.index });
                 // calls[this.broker.nodeID] ? calls[this.broker.nodeID]++ : calls[this.broker.nodeID] = 1;
                 // this.logger.info("Event received, parameters OK!", ctx.params);
             }
