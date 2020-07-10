@@ -49,7 +49,7 @@ function protectReject(err) {
 
 describe("Test events", () => {
 
-    const n = 5000;
+    const n = 500;
     
     const [master, slaveA, slaveB, slaveC] = ["master", "slaveA", "slaveB", "slaveC"].map(nodeID => {
         return new ServiceBroker({
@@ -75,8 +75,8 @@ describe("Test events", () => {
     it("should process events  with balancing between 2 nodes", () => {
         return master.waitForServices("events")
                 .delay(5000)
-                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { test: "A", a: 50, b: 13 }))))
-                .delay(5000)
+                .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map((i) => master.emit("account.created", { test: "A", index: i, a: 50, b: 13 }))))
+                .delay(500)
                 .catch(protectReject)
                 .then(() => {
                     // console.log(calls);
@@ -84,6 +84,20 @@ describe("Test events", () => {
                     expect(calls["A"].filter(o => o.result == 63)).toHaveLength(n);
                     //expect(calls.filter(o => o.node == "slaveA").length).toBeGreaterThanOrEqual(1);
                     //expect(calls.filter(o => o.node == "slaveB").length).toBeGreaterThanOrEqual(1);
+                })
+                .catch(err => {
+                    let unique = [];
+                    let double = [];
+                    function contains(list, item){
+                        let filtered_item = list.filter((i) => {
+                            return i.index === item.index;
+                        });
+                        return !!filtered_item.length;
+                    }
+                    calls["A"].map(e => contains(unique,e) ? double.push(e) : unique.push(e));
+                    console.log("received doubled", double);
+                    console.log("received unique", unique.length);
+                    throw err;
                 });
     }, 30000);
 
