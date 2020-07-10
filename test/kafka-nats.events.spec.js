@@ -76,7 +76,7 @@ describe("Test events", () => {
         return master.waitForServices("events")
                 .delay(5000)
                 .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { test: "A", a: 50, b: 13 }))))
-                .delay(500)
+                .delay(5000)
                 .catch(protectReject)
                 .then(() => {
                     // console.log(calls);
