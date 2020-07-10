@@ -73,7 +73,6 @@ describe("Test events", () => {
     
     // describe("Test calls", () => {
     it("should process events  with balancing between 2 nodes", () => {
-        calls = [];
         return master.waitForServices("events")
                 .delay(5000)
                 .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { test: "A", a: 50, b: 13 }))))
@@ -93,7 +92,6 @@ describe("Test events", () => {
     }, 30000);
 
     it("should process events  with balancing between 3 nodes", () => {
-        calls = [];
         return master.waitForServices("events")
                 .delay(500)
                 .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { test: "B", a: 20, b: 30 }))))
@@ -114,7 +112,6 @@ describe("Test events", () => {
     }, 30000);
 
     it("should process events without slaveC node", () => {
-        calls = [];
         return master.waitForServices("events")
                 .delay(500)
                 .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { test: "C", a: 20, b: 30 }))))
@@ -160,7 +157,6 @@ describe("Test persistent events", () => {
     
 
     it("start master and emit events", () => {
-        calls = [];
         return master.start()
                 .delay(5000)
                 .then(() => Promise.all(Array.from(Array(n),(x,i) => i).map(() => master.emit("account.created", { test: "D", a: 50, b: 13 }))))
