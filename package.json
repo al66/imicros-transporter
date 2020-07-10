@@ -6,7 +6,7 @@
   "description": "Two way transporter for Moleculer services (Kafka/NATS)",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage --no-cache --config=travis.js --silent",
+    "test": "jest --coverage --no-cache --config=travis.js",
     "test-local": "jest --coverage --no-cache --config=local.js --silent",
     "test-con": "jest --coverage --no-cache --config=local.js",
     "test-stream": "jest test/kafka-nats.streaming.spec.js --no-cache --config=local.js",
