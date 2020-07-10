@@ -49,7 +49,7 @@ function protectReject(err) {
 
 describe("Test events", () => {
 
-    const n = 500;
+    const n = 5000;
     
     const [master, slaveA, slaveB, slaveC] = ["master", "slaveA", "slaveB", "slaveC"].map(nodeID => {
         return new ServiceBroker({

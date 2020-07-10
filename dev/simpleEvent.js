@@ -128,6 +128,16 @@ let kafka1;
             }
         });
 
+        await sleep(5000);
+        console.log({
+            "received completed - after additonal seconds": {
+                "handler calls": count,
+                "received events": received,
+                "by nodes": calls
+            }
+        });
+        
+        
         await kafka1.stop();
         await Promise.all(listener.map(async (kafka) => await kafka.stop()));
 
@@ -139,6 +149,7 @@ let kafka1;
     
     }
     timer = setInterval(ready, 10);
+    
     
 })();
 
